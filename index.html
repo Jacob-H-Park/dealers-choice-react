@@ -1,0 +1,70 @@
+<html>
+  <head>
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.0/axios.min.js" integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  </head>
+
+  <body>
+    <h1>Basses</h1>
+    <div id='root'></div>
+    </div>
+    <script type='text/babel'>
+            class Main extends React.Component {
+        constructor() {
+          super()
+          this.state = {
+            basses: [],
+            bassCount: 0,
+            selectedBass: '',
+          }
+        }
+
+        async componentDidMount() {
+          try {
+              const response = await axios.get("/api/basses")
+              this.setState( { basses: response.data })
+              this.setState( { bassCount: response.data.length })
+          }
+          catch (err) {
+            console.log(err)
+          }
+        }
+        render() {
+          const basses = this.state.basses;
+          const numberOfBasses = this.state.bassCount;
+          const selectedBass = this.state.selectedBass;
+          return (
+            <div>
+              <h2>Number of Basses in Server: {this.state.bassCount}</h2>
+              {basses.map(item => {
+                return (<li>"{item.name}" made by {item.brand}</li>)})}
+              
+             <form method="POST">
+              <input name={name} placeholder = 'Add a bass' />
+                <select>
+                  {basses.reduce((acc, bass) => {
+                    if (acc.includes(bass.brand)) {
+                      return acc;
+                    } else {
+                      acc.push(bass.brand);
+                      return acc;
+                    }
+                  }, []).map( bass => {
+                    return (<option value={bass.brand}> {bass} </option>)})
+                  }
+
+                </select> 
+                <button>Create</button>
+              </form>
+            </div>
+          )
+        }
+      }  
+
+      const root = document.querySelector('#root');
+      ReactDOM.render(<Main />, root);
+    </script>
+  </body>
+</html>
